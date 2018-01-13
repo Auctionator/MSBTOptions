@@ -166,7 +166,7 @@ local function CreateMainFrame()
  mainFrame:SetScript("OnHide", OnHideMainFrame)
 
  mainFrame:SetScript("OnShow", function(self)
-   PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+   PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
  end)
  mainFrame:SetScript("OnDragStart", function(self)
    self:StartMoving()
