@@ -74,7 +74,7 @@ local function AddTab(frame, text, tooltip)
  tabInfo.tooltip = tooltip
 
  tabData[#tabData+1] = tabInfo
- 
+
  if (tabListbox) then
   InitTab(tabInfo)
   tabListbox:AddItem(#tabData)
@@ -87,13 +87,13 @@ end
 -- ****************************************************************************
 local function CreateTabLine(this)
  local frame = CreateFrame("Button", nil, this)
- 
+
  local fontString = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
  fontString:SetPoint("LEFT", frame, "LEFT")
  fontString:SetPoint("RIGHT", frame, "RIGHT")
-  
+
  frame.fontString = fontString
- frame.tooltipAnchor = "ANCHOR_LEFT" 
+ frame.tooltipAnchor = "ANCHOR_LEFT"
  return frame
 end
 
@@ -140,7 +140,7 @@ end
 -- Called when the main options frame is hidden.
 -- ****************************************************************************
 local function OnHideMainFrame(this)
- PlaySound("gsTitleOptionExit")
+ PlaySound(SOUNDKIT.GS_TITLE_OPTION_EXIT)
  -- Hide the registered popup frames.
  for frame in pairs(popupFrames) do
   frame:Hide()
@@ -166,7 +166,7 @@ local function CreateMainFrame()
  mainFrame:SetScript("OnHide", OnHideMainFrame)
 
  mainFrame:SetScript("OnShow", function(self)
-   PlaySound("igMainMenuOption")
+   PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
  end)
  mainFrame:SetScript("OnDragStart", function(self)
    self:StartMoving()
@@ -185,9 +185,9 @@ local function CreateMainFrame()
  local texture = mainFrame:CreateTexture(nil, "BACKGROUND")
  texture:SetTexture("Interface\\FriendsFrame\\FriendsFrameScrollIcon")
  texture:SetWidth(64)
- texture:SetHeight(64) 
+ texture:SetHeight(64)
  texture:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 8, 1)
- 
+
  -- Top left.
  texture = mainFrame:CreateTexture(nil, "ARTWORK")
  texture:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-General-TopLeft")
@@ -242,7 +242,7 @@ local function CreateMainFrame()
  texture:SetHeight(184)
  texture:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 384, 0)
  texture:SetTexCoord(0.5, 1, 0, 0.71875)
- 
+
  -- Bottom right.
  texture = mainFrame:CreateTexture(nil, "ARTWORK")
  texture:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-General-BottomRight")
@@ -251,40 +251,40 @@ local function CreateMainFrame()
  texture:SetPoint("BOTTOMRIGHT")
  texture:SetTexCoord(0, 0.78125, 0, 0.71875)
 
- -- Top vertical. 
+ -- Top vertical.
  texture = mainFrame:CreateTexture(nil, "OVERLAY")
  texture:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-General-TopRight")
  texture:SetWidth(8)
  texture:SetHeight(184)
  texture:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 180, -72)
  texture:SetTexCoord(0.648437, 0.7109375, 0.28125, 1.0)
- 
- -- Bottom vertical. 
+
+ -- Bottom vertical.
  texture = mainFrame:CreateTexture(nil, "OVERLAY")
  texture:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-General-TopRight")
  texture:SetWidth(8)
  texture:SetHeight(174)
  texture:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 180, -256)
  texture:SetTexCoord(0.648437, 0.7109375, 0.3203125, 1.0)
- 
+
  -- Window title.
  local fontString = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
  fontString:SetText(WINDOW_TITLE)
  fontString:SetPoint("TOP", mainFrame, "TOP", 0, -18)
- 
+
  -- Close Button.
  local frame = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
  frame:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -3, -8)
 
- 
- -- Setup the tabs listbox. 
+
+ -- Setup the tabs listbox.
  tabListbox = MSBTControls.CreateListbox(mainFrame)
  tabListbox:Configure(150, 350, 20)
  tabListbox:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 30, -78)
  tabListbox:SetCreateLineHandler(CreateTabLine)
  tabListbox:SetDisplayHandler(DisplayTabLine)
  tabListbox:SetClickHandler(OnClickTabLine)
- 
+
  -- Add registered tabs.
  for k, tabInfo in ipairs(tabData) do
   InitTab(tabInfo)
@@ -295,7 +295,7 @@ local function CreateMainFrame()
  tabListbox:SetSelectedItem(2)
  tabListbox:Refresh()
  tabData[2].frame:Show()
- 
+
  -- Insert the frame name into the UISpecialFrames array so it closes when
  -- the escape key is pressed.
  table.insert(UISpecialFrames, mainFrame:GetName())
@@ -307,7 +307,7 @@ end
 -- ****************************************************************************
 local function ShowMainFrame()
  if (not mainFrame) then CreateMainFrame() end
- if (not MSBTScrollAreasConfigFrame or not MSBTScrollAreasConfigFrame:IsShown()) then 
+ if (not MSBTScrollAreasConfigFrame or not MSBTScrollAreasConfigFrame:IsShown()) then
   mainFrame:Show()
  end
 end

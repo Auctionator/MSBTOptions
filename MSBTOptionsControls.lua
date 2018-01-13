@@ -59,7 +59,7 @@ local function Listbox_HandleScrollbar(this)
   slider:Hide();
   display:SetPoint("BOTTOMRIGHT");
  else
-  display:SetPoint("BOTTOMRIGHT", display:GetParent(), "BOTTOMRIGHT", -16, 0); 
+  display:SetPoint("BOTTOMRIGHT", display:GetParent(), "BOTTOMRIGHT", -16, 0);
   slider:Show();
  end
 end
@@ -95,12 +95,12 @@ end
 local function Listbox_Refresh(this)
  -- Don't do anything if the listbox isn't configured.
  if (not Listbox_IsConfigured(this)) then return; end
- 
+
  -- Handle scroll bar showing / resizing.
  Listbox_HandleScrollbar(this);
- 
+
  -- Hide the highlight.
- this.highlightFrame:Hide(); 
+ this.highlightFrame:Hide();
 
  -- Show or hide the correct lines depending on how many items there are and
  -- apply a highlight to the selected item.
@@ -120,7 +120,7 @@ local function Listbox_Refresh(this)
    else
     isSelected = false;
    end
-   
+
    if (this.displayHandler) then this:displayHandler(line, this.items[line.itemNumber], isSelected); end
   end
  end
@@ -153,7 +153,7 @@ local function Listbox_OnClickLine(this)
  listbox.selectedItem = this.lineNumber + Listbox_GetOffset(listbox);
 
  Listbox_ShowHighlight(listbox, this);
- 
+
  if (listbox.clickHandler) then listbox:clickHandler(this, listbox.items[listbox.selectedItem]); end
 end
 
@@ -170,11 +170,11 @@ local function Listbox_OnEnterLine(this)
   emphasizeFrame:SetPoint("BOTTOMRIGHT");
   emphasizeFrame:Show();
  end
- 
+
  if (this.tooltip) then
   GameTooltip:SetOwner(this, this.tooltipAnchor or "ANCHOR_RIGHT");
   GameTooltip:SetText(this.tooltip, nil, nil, nil, nil, 1);
- end 
+ end
 end
 
 
@@ -193,7 +193,7 @@ end
 local function Listbox_OnClickUp(this)
  local listbox = this:GetParent():GetParent();
  Listbox_ScrollUp(listbox);
- PlaySound("UChatScrollButton");
+ PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON);
 end
 
 
@@ -203,7 +203,7 @@ end
 local function Listbox_OnClickDown(this)
  local listbox = this:GetParent():GetParent();
  Listbox_ScrollDown(listbox);
- PlaySound("UChatScrollButton");
+ PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON);
 end
 
 
@@ -235,8 +235,8 @@ local function Listbox_CreateLine(this)
  -- Get a line from cache if there are any otherwise call the registered line
  -- handler to create a new line.
  local lineCache = this.lineCache;
- local line = (#lineCache > 0) and table.remove(lineCache) or this:lineHandler(); 
- 
+ local line = (#lineCache > 0) and table.remove(lineCache) or this:lineHandler();
+
  line:SetParent(this.displayFrame);
  line:SetHeight(this.lineHeight);
  line:ClearAllPoints();
@@ -268,7 +268,7 @@ local function Listbox_Reconfigure(this, width, height, lineHeight)
  -- Setup container frame.
  this:SetWidth(width);
  this:SetHeight(height);
- 
+
  -- Setup line calculations.
  this.lineHeight = lineHeight;
  this.linesPerPage = math.floor(height / lineHeight);
@@ -277,7 +277,7 @@ local function Listbox_Reconfigure(this, width, height, lineHeight)
  for _, line in ipairs(this.lines) do
   line:SetHeight(this.lineHeight);
  end
- 
+
  -- Add lines if more will fit on the page and they are needed.
  local lines = this.lines;
  if (#this.items > #lines) then
@@ -309,16 +309,16 @@ end
 local function Listbox_Configure(this, width, height, lineHeight)
  -- Don't do anything if required parameters are invalid.
  if (not width or not height or not lineHeight) then return; end
- 
+
  if (Listbox_IsConfigured(this)) then Listbox_Reconfigure(this, width, height, lineHeight); return; end
- 
+
  -- Don't allow negative widths.
  if (width < 0) then width = 0; end
- 
+
  -- Setup container frame.
  this:SetWidth(width);
  this:SetHeight(height);
- 
+
  -- Setup slider frame.
  local slider = this.sliderFrame;
  slider:SetMinMaxValues(0, 0);
@@ -327,13 +327,13 @@ local function Listbox_Configure(this, width, height, lineHeight)
  -- Setup line calculations.
  this.lineHeight = lineHeight;
  this.linesPerPage = math.floor(height / lineHeight);
- 
- this.configured = true; 
+
+ this.configured = true;
 end
 
 
 -- ****************************************************************************
--- Set the function to be called when a new line needs to be created.  The 
+-- Set the function to be called when a new line needs to be created.  The
 -- called function must return a "Button" frame.
 -- ****************************************************************************
 local function Listbox_SetCreateLineHandler(this, handler)
@@ -374,13 +374,13 @@ end
 local function Listbox_AddItem(this, key, forceVisible)
  -- Don't do anything if the listbox isn't configured.
  if (not Listbox_IsConfigured(this)) then return; end
- 
- -- Add the passed key to the items list. 
+
+ -- Add the passed key to the items list.
  local items = this.items;
  items[#items + 1] = key;
 
  --  Create a new line if the max number allowed per page hasn't been reached.
- local lines = this.lines; 
+ local lines = this.lines;
  if (#lines < this.linesPerPage) then
   Listbox_CreateLine(this);
  end
@@ -388,7 +388,7 @@ local function Listbox_AddItem(this, key, forceVisible)
  -- Set the new max offset value.
  local maxOffset = math.max(#items - #lines, 0);
  this.sliderFrame:SetMinMaxValues(0, maxOffset);
- 
+
  -- Make sure the newly added item is visible if the force flag is set.
  if (forceVisible) then Listbox_SetOffset(this, maxOffset); end
 
@@ -408,7 +408,7 @@ local function Listbox_RemoveItem(this, itemNumber)
 
  -- Set the new max offset value.
  this.sliderFrame:SetMinMaxValues(0, math.max(#items - #this.lines, 0));
- 
+
  Listbox_Refresh(this);
 end
 
@@ -472,12 +472,12 @@ local function Listbox_Clear(this)
  for k, v in ipairs(items) do
   items[k] = nil;
  end
- 
+
  -- Set the new max offset value.
  this.sliderFrame:SetMinMaxValues(0, 0);
- 
+
  this.selectedItem = 0;
- 
+
  Listbox_Refresh(this);
 end
 
@@ -511,7 +511,7 @@ local function CreateListbox(parent)
  -- Create the frame used to emphasize the entry the mouse is over.
  if (not emphasizeFrame) then
   emphasizeFrame = CreateFrame("Frame");
-  
+
   local texture = emphasizeFrame:CreateTexture(nil, "ARTWORK");
   texture:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight");
   texture:SetBlendMode("ADD");
@@ -521,7 +521,7 @@ local function CreateListbox(parent)
 
  -- Create container frame.
  local listbox = CreateFrame("Frame", nil, parent);
- 
+
  -- Highlight frame.
  local highlight = CreateFrame("Frame");
 
@@ -536,7 +536,7 @@ local function CreateListbox(parent)
  display:SetPoint("TOPLEFT", listbox, "TOPLEFT");
  display:SetPoint("BOTTOMRIGHT", listbox, "BOTTOMRIGHT");
 
-  
+
  -- Create slider to track the position.
  local slider = CreateFrame("Slider", nil, listbox);
  slider:Hide();
@@ -552,17 +552,17 @@ local function CreateListbox(parent)
  local upButton = CreateFrame("Button", nil, slider, "UIPanelScrollUpButtonTemplate");
  upButton:SetPoint("BOTTOM", slider, "TOP");
  upButton:SetScript("OnClick", Listbox_OnClickUp);
- 
+
  -- Down button.
  local downButton = CreateFrame("Button", nil, slider, "UIPanelScrollDownButtonTemplate");
  downButton:SetPoint("TOP", slider, "BOTTOM");
  downButton:SetScript("OnClick", Listbox_OnClickDown);
 
- 
+
  -- Make it work with the mouse wheel.
  display:EnableMouseWheel(true);
  display:SetScript("OnMouseWheel", Listbox_OnMouseWheel);
- 
+
 
  -- Extension functions.
  listbox.Configure				= Listbox_Configure;
@@ -606,8 +606,12 @@ end
 -- Called when the internal checkbutton is clicked.
 -- ****************************************************************************
 local function Checkbox_OnClick(this)
- local isChecked = this:GetChecked() and true or false;
- if (isChecked) then PlaySound("igMainMenuOptionCheckBoxOn"); else PlaySound("igMainMenuOptionCheckBoxOff"); end
+  local isChecked = this:GetChecked() and true or false;
+  if (isChecked) then
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+  else
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+  end
 
  local checkbox = this:GetParent();
  if (checkbox.clickHandler) then checkbox:clickHandler(isChecked); end
@@ -662,7 +666,7 @@ local function Checkbox_Configure(this, size, label, tooltip)
 
  -- Setup the container frame.
  this:SetHeight(size);
- 
+
  -- Setup the checkbox dimensions.
  local check = this.checkFrame;
  check:SetWidth(size);
@@ -727,7 +731,7 @@ local function CreateCheckbox(parent)
  if (not calcFontString) then
   calcFontString = UIParent:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
  end
- 
+
  -- Create container frame.
  local checkbox = CreateFrame("Frame", nil, parent);
 
@@ -759,7 +763,7 @@ local function CreateCheckbox(parent)
  checkbox.SetChecked		= Checkbox_SetChecked;
  checkbox.Disable			= Checkbox_Disable;
  checkbox.Enable			= Checkbox_Enable;
- 
+
  -- Track internal values.
  checkbox.checkFrame = checkbutton;
  checkbox.fontString = fontString;
@@ -776,7 +780,7 @@ end
 -- Called when the button is clicked.
 -- ****************************************************************************
 local function Button_OnClick(this)
- PlaySound("igMainMenuOptionCheckBoxOn");
+ PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
  if (this.clickHandler) then this:clickHandler(); end
 end
 
@@ -829,7 +833,7 @@ local function CreateButton(parent)
 
  -- Extension functions.
  button.SetClickHandler	= Button_SetClickHandler;
- button.SetTooltip	= Button_SetTooltip; 
+ button.SetTooltip	= Button_SetTooltip;
 
  return button;
 end
@@ -866,10 +870,10 @@ local function CreateOptionButton(parent)
  local button = CreateButton(parent);
  local fontString = button:CreateFontString(nil, "OVERLAY");
  fontString:SetPoint("CENTER");
- button:SetFontString(fontString); 
+ button:SetFontString(fontString);
  button:SetNormalFontObject(GameFontNormalSmall);
  button:SetHighlightFontObject(GameFontHighlightSmall);
- button:SetDisabledFontObject(GameFontDisableSmall); 
+ button:SetDisabledFontObject(GameFontDisableSmall);
  button:SetNormalTexture("Interface\\Buttons\\UI-Panel-Button-Up");
  button:SetPushedTexture("Interface\\Buttons\\UI-Panel-Button-Down");
  button:SetDisabledTexture("Interface\\Buttons\\UI-Panel-Button-Disabled");
@@ -950,7 +954,7 @@ end
 -- ****************************************************************************
 local function Slider_SetLabel(this, label)
  this.labelText = label or "";
- if (this.labelText ~= "") then 
+ if (this.labelText ~= "") then
   this.labelFontString:SetText(this.labelText .. ": " .. this:GetValue());
  else
   this.labelFontString:SetText(this:GetValue());
@@ -1051,7 +1055,7 @@ local function CreateSlider(parent)
 
  -- Create container frame.
  local slider = CreateFrame("Frame", nil, parent);
- slider:SetHeight(30); 
+ slider:SetHeight(30);
 
  -- Create slider.
  local sliderFrame = CreateFrame("Slider", nil, slider);
@@ -1065,9 +1069,9 @@ local function CreateSlider(parent)
  sliderFrame:SetScript("OnValueChanged", Slider_OnValueChanged);
  sliderFrame:SetScript("OnEnter", Slider_OnEnter);
  sliderFrame:SetScript("OnLeave", Slider_OnLeave);
- 
 
- -- Label. 
+
+ -- Label.
  local label = slider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
  label:SetPoint("BOTTOM", sliderFrame, "TOP", 0, 0);
 
@@ -1083,11 +1087,11 @@ local function CreateSlider(parent)
  slider.Enable					= Slider_Enable;
  slider.Disable					= Slider_Disable;
 
- 
+
  -- Track internal values.
  slider.sliderFrame = sliderFrame;
  slider.labelFontString = label;
- slider.labelText = ""; 
+ slider.labelText = "";
  return slider;
 end
 
@@ -1112,7 +1116,7 @@ local function Dropdown_OnEnter(this)
  if (this.tooltip) then
   GameTooltip:SetOwner(this, this.tooltipAnchor or "ANCHOR_RIGHT");
   GameTooltip:SetText(this.tooltip, nil, nil, nil, nil, 1);
- end 
+ end
 end
 
 
@@ -1136,7 +1140,7 @@ end
 -- Called when the button for the dropdown is pressed.
 -- ****************************************************************************
 local function Dropdown_OnClick(this)
- -- Close the listbox and exit if it's already open for the dropdown. 
+ -- Close the listbox and exit if it's already open for the dropdown.
  local dropdown = this:GetParent();
  if (dropdownListboxFrame:IsShown() and dropdownListboxFrame.dropdown == dropdown) then
   dropdownListboxFrame:Hide();
@@ -1177,11 +1181,11 @@ end
 -- ****************************************************************************
 local function Dropdown_CreateLine(this)
  local frame = CreateFrame("Button", nil, this);
- 
+
  local fontString = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
  fontString:SetPoint("LEFT", frame, "LEFT");
  fontString:SetPoint("RIGHT", frame, "RIGHT");
-  
+
  frame.fontString = fontString;
  return frame;
 end
@@ -1205,7 +1209,7 @@ local function Dropdown_OnClickLine(this, line, value)
  dropdown.selectedFontString:SetText(dropdown.items[value]);
  dropdown.selectedItem = value;
  dropdownListboxFrame:Hide();
- 
+
  -- Call the registered change handler for the dropdown.
  if (dropdown.changeHandler) then dropdown:changeHandler(dropdown.itemIDs[value]); end
 end
@@ -1215,7 +1219,7 @@ end
 -- Sets the label for the dropdown.
 -- ****************************************************************************
 local function Dropdown_SetLabel(this, label)
- this.labelFontString:SetText(label or ""); 
+ this.labelFontString:SetText(label or "");
 end
 
 
@@ -1223,7 +1227,7 @@ end
 -- Sets the tooltip for the dropdown.
 -- ****************************************************************************
 local function Dropdown_SetTooltip(this, tooltip)
- this.tooltip = tooltip; 
+ this.tooltip = tooltip;
 end
 
 
@@ -1231,14 +1235,14 @@ end
 -- Configures the dropdown.
 -- ****************************************************************************
 local function Dropdown_Configure(this, width, label, tooltip)
- -- Don't do anything if required parameters are invalid. 
+ -- Don't do anything if required parameters are invalid.
  if (not width) then return; end
 
- -- Set the width of the dropdown and the max height of the listbox is shown. 
+ -- Set the width of the dropdown and the max height of the listbox is shown.
  this:SetWidth(width);
 
  Dropdown_SetLabel(this, label);
- Dropdown_SetTooltip(this, tooltip); 
+ Dropdown_SetTooltip(this, tooltip);
 end
 
 
@@ -1283,7 +1287,7 @@ local function Dropdown_RemoveItem(this, id)
   if (itemID == id) then
    -- Hide dropdown if it is shown.
    Dropdown_HideSelections(this);
-   
+
    -- Clear the selected item if it's the item being removed.
    if (itemNum == this.selectedItem) then
     this.selectedItem = 0;
@@ -1311,7 +1315,7 @@ local function Dropdown_Clear(this)
  for k, v in ipairs(itemIDs) do
   itemIDs[k] = nil;
  end
- 
+
  this.selectedFontString:SetText(nil);
 end
 
@@ -1368,7 +1372,7 @@ local function Dropdown_Sort(this)
   items[j + 1] = tempItem;
   itemIDs[j + 1] = tempID;
  end
- 
+
  Dropdown_SetSelectedID(this, selectedID);
 end
 
@@ -1428,7 +1432,7 @@ end
 local function CreateDropdown(parent)
  -- Create dropdown listbox if it hasn't already been.
  if (not dropdownListboxFrame) then Dropdown_CreateListboxFrame(parent); end
- 
+
 
  -- Create container frame.
  local dropdown = CreateFrame("Frame", nil, parent);
@@ -1438,7 +1442,7 @@ local function CreateDropdown(parent)
  dropdown:SetScript("OnLeave", Dropdown_OnLeave);
  dropdown:SetScript("OnHide", Dropdown_OnHide);
 
- 
+
  -- Left border.
  local left = dropdown:CreateTexture(nil, "BACKGROUND");
  left:SetTexture("Interface\\Glues\\CharacterCreate\\CharacterCreate-LabelFrame");
@@ -1447,15 +1451,15 @@ local function CreateDropdown(parent)
  left:SetPoint("BOTTOMLEFT");
  left:SetTexCoord(0.125, 0.1953125, 0.28125, 0.671875);
 
- -- Right border. 
+ -- Right border.
  local right = dropdown:CreateTexture(nil, "BACKGROUND");
  right:SetTexture("Interface\\Glues\\CharacterCreate\\CharacterCreate-LabelFrame");
  right:SetWidth(9);
  right:SetHeight(25);
  right:SetPoint("BOTTOMRIGHT");
  right:SetTexCoord(0.7890625, 0.859375, 0.28125, 0.671875);
- 
- -- Middle border. 
+
+ -- Middle border.
  local middle = dropdown:CreateTexture(nil, "BACKGROUND");
  middle:SetTexture("Interface\\Glues\\CharacterCreate\\CharacterCreate-LabelFrame");
  middle:SetWidth(76);
@@ -1467,7 +1471,7 @@ local function CreateDropdown(parent)
  -- Label.
  local label = dropdown:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
  label:SetPoint("BOTTOMLEFT", left, "TOPLEFT", 2, 2);
- 
+
 
  -- Dropdown button.
  local button = CreateFrame("Button", nil, dropdown);
@@ -1487,8 +1491,8 @@ local function CreateDropdown(parent)
  selected:SetPoint("LEFT", left, "RIGHT");
  selected:SetPoint("RIGHT", button, "LEFT");
  selected:SetJustifyH("RIGHT");
- 
- 
+
+
  -- Extension functions.
  dropdown.Configure			= Dropdown_Configure;
  dropdown.SetListboxHeight	= Dropdown_SetListboxHeight;
@@ -1506,7 +1510,7 @@ local function CreateDropdown(parent)
  dropdown.Sort				= Dropdown_Sort;
  dropdown.Disable			= Dropdown_Disable;
  dropdown.Enable			= Dropdown_Enable;
- 
+
  -- Track internal values.
  dropdown.selectedFontString = selected;
  dropdown.buttonFrame = button;
@@ -1598,7 +1602,7 @@ end
 local function Editbox_Configure(this, width, label, tooltip)
  -- Don't do anything if required parameters are invalid.
  if (not width) then return; end
- 
+
  this:SetWidth(width);
  Editbox_SetLabel(this, label);
  Editbox_SetTooltip(this, tooltip);
@@ -1666,7 +1670,7 @@ end
 -- ****************************************************************************
 local function Editbox_Enable(this)
  this.editboxFrame:EnableMouse(true);
- this.labelFontString:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b); 
+ this.labelFontString:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
 end
 
 
@@ -1677,7 +1681,7 @@ local function CreateEditbox(parent)
  -- Create container frame.
  local editbox = CreateFrame("Frame", nil, parent);
  editbox:SetHeight(32);
- 
+
  -- Create editbox frame.
  local editboxFrame = CreateFrame("Editbox", nil, editbox);
  editboxFrame:SetHeight(20);
@@ -1691,7 +1695,7 @@ local function CreateEditbox(parent)
  editboxFrame:SetScript("OnTextChanged", Editbox_OnTextChanged);
  editboxFrame:SetScript("OnEnter", Editbox_OnEnter);
  editboxFrame:SetScript("OnLeave", Editbox_OnLeave);
-  
+
  -- Left border.
  local left = editboxFrame:CreateTexture(nil, "BACKGROUND");
  left:SetTexture("Interface\\Common\\Common-Input-Border");
@@ -1700,15 +1704,15 @@ local function CreateEditbox(parent)
  left:SetPoint("LEFT", editboxFrame, "LEFT", -5, 0);
  left:SetTexCoord(0, 0.0625, 0, 0.625);
 
- -- Right border. 
+ -- Right border.
  local right = editboxFrame:CreateTexture(nil, "BACKGROUND");
  right:SetTexture("Interface\\Common\\Common-Input-Border");
  right:SetWidth(8);
  right:SetHeight(20);
  right:SetPoint("RIGHT");
  right:SetTexCoord(0.9375, 1, 0, 0.625);
- 
- -- Middle border. 
+
+ -- Middle border.
  local middle = editboxFrame:CreateTexture(nil, "BACKGROUND");
  middle:SetTexture("Interface\\Common\\Common-Input-Border");
  middle:SetWidth(10);
@@ -1738,7 +1742,7 @@ local function CreateEditbox(parent)
  editbox.Disable				= Editbox_Disable;
  editbox.Enable					= Editbox_Enable;
 
- 
+
  -- Track internal values.
  editbox.editboxFrame = editboxFrame;
  editbox.labelFontString = label;
@@ -1781,7 +1785,7 @@ local function Colorswatch_ColorPickerOnCancel(previousValues)
  if (not colorswatch) then return; end
 
  Colorswatch_SetColor(colorswatch, previousValues.r, previousValues.g, previousValues.b);
- if (colorswatch.colorChangedHandler) then colorswatch:colorChangedHandler(); end 
+ if (colorswatch.colorChangedHandler) then colorswatch:colorChangedHandler(); end
 end
 
 
@@ -1874,7 +1878,7 @@ local function CreateColorswatch(parent)
  colorswatch:SetScript("OnClick", Colorswatch_OnClick);
  colorswatch:SetScript("OnEnter", Colorswatch_OnEnter);
  colorswatch:SetScript("OnLeave", Colorswatch_OnLeave);
- 
+
 
  -- Border texture.
  local texture = colorswatch:CreateTexture(nil, "BACKGROUND");
@@ -1894,7 +1898,7 @@ local function CreateColorswatch(parent)
  colorswatch.SetColor				= Colorswatch_SetColor;
  colorswatch.Disable				= Colorswatch_Disable;
  colorswatch.Enable					= Colorswatch_Enable;
- 
+
  -- Track internal values.
  colorswatch.borderTexture = texture;
  return colorswatch;
